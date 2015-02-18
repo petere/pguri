@@ -1,0 +1,178 @@
+\pset null _null_
+CREATE TABLE test (a serial, b uri);
+INSERT INTO test (b)
+VALUES ('http://www.postgresql.org/'),
+       ('http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS'),
+       ('https://duckduckgo.com/?q=postgresql&ia=about'),
+       ('ftp://ftp.gnu.org/gnu/bison'),
+       ('mailto:foo@example.com'),
+       ('ssh://username@review.openstack.org:29418/openstack/nova.git'),
+       ('http://admin:password@192.168.0.1'),
+       ('http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html'),
+       ('http://[1080::8:800:200C:417A]/foo'),
+       (''),
+       ('foobar');
+SELECT * FROM test;
+ a  |                                            b                                            
+----+-----------------------------------------------------------------------------------------
+  1 | http://www.postgresql.org/
+  2 | http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS
+  3 | https://duckduckgo.com/?q=postgresql&ia=about
+  4 | ftp://ftp.gnu.org/gnu/bison
+  5 | mailto:foo@example.com
+  6 | ssh://username@review.openstack.org:29418/openstack/nova.git
+  7 | http://admin:password@192.168.0.1
+  8 | http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
+  9 | http://[1080::8:800:200C:417A]/foo
+ 10 | 
+ 11 | foobar
+(11 rows)
+
+-- error cases
+SELECT uri ':';
+ERROR:  invalid input syntax for type uri at or near ":"
+LINE 1: SELECT uri ':';
+                   ^
+SELECT uri 'foo bar';
+ERROR:  invalid input syntax for type uri at or near " bar"
+LINE 1: SELECT uri 'foo bar';
+                   ^
+\x on
+SELECT b AS uri,
+       uri_scheme(b),
+       uri_userinfo(b),
+       uri_host(b),
+       uri_host_inet(b),
+       uri_port(b),
+       uri_path(b),
+       uri_query(b),
+       uri_fragment(b)
+  FROM test;
+-[ RECORD 1 ]-+----------------------------------------------------------------------------------------
+uri           | http://www.postgresql.org/
+uri_scheme    | http
+uri_userinfo  | _null_
+uri_host      | www.postgresql.org
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {""}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 2 ]-+----------------------------------------------------------------------------------------
+uri           | http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS
+uri_scheme    | http
+uri_userinfo  | _null_
+uri_host      | www.postgresql.org
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {docs,devel,static,xfunc-sql.html}
+uri_query     | _null_
+uri_fragment  | XFUNC-SQL-FUNCTION-ARGUMENTS
+-[ RECORD 3 ]-+----------------------------------------------------------------------------------------
+uri           | https://duckduckgo.com/?q=postgresql&ia=about
+uri_scheme    | https
+uri_userinfo  | _null_
+uri_host      | duckduckgo.com
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {""}
+uri_query     | q=postgresql&ia=about
+uri_fragment  | _null_
+-[ RECORD 4 ]-+----------------------------------------------------------------------------------------
+uri           | ftp://ftp.gnu.org/gnu/bison
+uri_scheme    | ftp
+uri_userinfo  | _null_
+uri_host      | ftp.gnu.org
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {gnu,bison}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 5 ]-+----------------------------------------------------------------------------------------
+uri           | mailto:foo@example.com
+uri_scheme    | mailto
+uri_userinfo  | _null_
+uri_host      | _null_
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {foo@example.com}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 6 ]-+----------------------------------------------------------------------------------------
+uri           | ssh://username@review.openstack.org:29418/openstack/nova.git
+uri_scheme    | ssh
+uri_userinfo  | username
+uri_host      | review.openstack.org
+uri_host_inet | _null_
+uri_port      | 29418
+uri_path      | {openstack,nova.git}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 7 ]-+----------------------------------------------------------------------------------------
+uri           | http://admin:password@192.168.0.1
+uri_scheme    | http
+uri_userinfo  | admin:password
+uri_host      | 192.168.0.1
+uri_host_inet | 192.168.0.1
+uri_port      | _null_
+uri_path      | {}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 8 ]-+----------------------------------------------------------------------------------------
+uri           | http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
+uri_scheme    | http
+uri_userinfo  | _null_
+uri_host      | FEDC:BA98:7654:3210:FEDC:BA98:7654:3210
+uri_host_inet | fedc:ba98:7654:3210:fedc:ba98:7654:3210
+uri_port      | 80
+uri_path      | {index.html}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 9 ]-+----------------------------------------------------------------------------------------
+uri           | http://[1080::8:800:200C:417A]/foo
+uri_scheme    | http
+uri_userinfo  | _null_
+uri_host      | 1080::8:800:200C:417A
+uri_host_inet | 1080::8:800:200c:417a
+uri_port      | _null_
+uri_path      | {foo}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 10 ]+----------------------------------------------------------------------------------------
+uri           | 
+uri_scheme    | _null_
+uri_userinfo  | _null_
+uri_host      | _null_
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 11 ]+----------------------------------------------------------------------------------------
+uri           | foobar
+uri_scheme    | _null_
+uri_userinfo  | _null_
+uri_host      | _null_
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {foobar}
+uri_query     | _null_
+uri_fragment  | _null_
+
+\x off
+SELECT DISTINCT b FROM test ORDER BY b;
+                                            b                                            
+-----------------------------------------------------------------------------------------
+ 
+ foobar
+ ftp://ftp.gnu.org/gnu/bison
+ http://[1080::8:800:200C:417A]/foo
+ http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
+ http://admin:password@192.168.0.1
+ http://www.postgresql.org/
+ http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS
+ https://duckduckgo.com/?q=postgresql&ia=about
+ mailto:foo@example.com
+ ssh://username@review.openstack.org:29418/openstack/nova.git
+(11 rows)
+
