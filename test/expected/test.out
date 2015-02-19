@@ -10,6 +10,7 @@ VALUES ('http://www.postgresql.org/'),
        ('http://admin:password@192.168.0.1'),
        ('http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html'),
        ('http://[1080::8:800:200C:417A]/foo'),
+       ('http://host:'),
        (''),
        ('foobar');
 SELECT * FROM test;
@@ -24,9 +25,10 @@ SELECT * FROM test;
   7 | http://admin:password@192.168.0.1
   8 | http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
   9 | http://[1080::8:800:200C:417A]/foo
- 10 | 
- 11 | foobar
-(11 rows)
+ 10 | http://host:
+ 11 | 
+ 12 | foobar
+(12 rows)
 
 -- error cases
 SELECT uri ':';
@@ -36,6 +38,10 @@ LINE 1: SELECT uri ':';
 SELECT uri 'foo bar';
 ERROR:  invalid input syntax for type uri at or near " bar"
 LINE 1: SELECT uri 'foo bar';
+                   ^
+SELECT uri 'http://host:port/';
+ERROR:  invalid input syntax for type uri at or near "/"
+LINE 1: SELECT uri 'http://host:port/';
                    ^
 \x on
 SELECT b AS uri,
@@ -139,6 +145,16 @@ uri_path      | {foo}
 uri_query     | _null_
 uri_fragment  | _null_
 -[ RECORD 10 ]+----------------------------------------------------------------------------------------
+uri           | http://host:
+uri_scheme    | http
+uri_userinfo  | _null_
+uri_host      | host
+uri_host_inet | _null_
+uri_port      | _null_
+uri_path      | {}
+uri_query     | _null_
+uri_fragment  | _null_
+-[ RECORD 11 ]+----------------------------------------------------------------------------------------
 uri           | 
 uri_scheme    | _null_
 uri_userinfo  | _null_
@@ -148,7 +164,7 @@ uri_port      | _null_
 uri_path      | {}
 uri_query     | _null_
 uri_fragment  | _null_
--[ RECORD 11 ]+----------------------------------------------------------------------------------------
+-[ RECORD 12 ]+----------------------------------------------------------------------------------------
 uri           | foobar
 uri_scheme    | _null_
 uri_userinfo  | _null_
@@ -169,10 +185,11 @@ SELECT DISTINCT b FROM test ORDER BY b;
  http://[1080::8:800:200C:417A]/foo
  http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
  http://admin:password@192.168.0.1
+ http://host:
  http://www.postgresql.org/
  http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS
  https://duckduckgo.com/?q=postgresql&ia=about
  mailto:foo@example.com
  ssh://username@review.openstack.org:29418/openstack/nova.git
-(11 rows)
+(12 rows)
 

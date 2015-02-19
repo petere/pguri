@@ -50,7 +50,7 @@ CREATE FUNCTION uri_host_inet(uri) RETURNS inet
     LANGUAGE C
     AS '$libdir/pguri';
 
-CREATE FUNCTION uri_port(uri) RETURNS text
+CREATE FUNCTION uri_port(uri) RETURNS integer
     IMMUTABLE
     STRICT
     LANGUAGE C

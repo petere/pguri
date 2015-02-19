@@ -172,15 +172,15 @@ uri_port(PG_FUNCTION_ARGS)
 	Datum arg = PG_GETARG_DATUM(0);
 	char *s = TextDatumGetCString(arg);
 	UriUriA uri;
-	text *result;
+	const char *p;
 
 	parse_uri(s, &uri);
-	result = uri_text_range_to_text(uri.portText);
-	uriFreeUriMembersA(&uri);
-	if (result)
-		PG_RETURN_TEXT_P(result);
-	else
+	if (!uri.portText.first || !uri.portText.afterLast
+		|| uri.portText.afterLast == uri.portText.first)
 		PG_RETURN_NULL();
+	p = pnstrdup(uri.portText.first, uri.portText.afterLast - uri.portText.first);
+	uriFreeUriMembersA(&uri);
+	PG_RETURN_INT32(strtol(p, NULL, 10));
 }
 
 PG_FUNCTION_INFO_V1(uri_query);

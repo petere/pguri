@@ -12,6 +12,7 @@ VALUES ('http://www.postgresql.org/'),
        ('http://admin:password@192.168.0.1'),
        ('http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html'),
        ('http://[1080::8:800:200C:417A]/foo'),
+       ('http://host:'),
        (''),
        ('foobar');
 
@@ -20,6 +21,7 @@ SELECT * FROM test;
 -- error cases
 SELECT uri ':';
 SELECT uri 'foo bar';
+SELECT uri 'http://host:port/';
 
 
 \x on
