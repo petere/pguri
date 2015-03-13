@@ -242,9 +242,10 @@ uri_path(PG_FUNCTION_ARGS)
 	}
 	uriFreeUriMembersA(&uri);
 
-	PG_RETURN_ARRAYTYPE_P(astate
-						  ? makeArrayResult(astate, CurrentMemoryContext)
-						  : construct_empty_array(TEXTOID));
+	if (astate)
+		PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate, CurrentMemoryContext));
+	else
+		PG_RETURN_ARRAYTYPE_P(construct_empty_array(TEXTOID));
 }
 
 static int
