@@ -143,18 +143,20 @@ uri_host_inet(PG_FUNCTION_ARGS)
 	if (uri.hostData.ip4)
 	{
 		unsigned char *data = uri.hostData.ip4;
-		char *tmp = psprintf("%u.%u.%u.%u", data[0], data[1], data[2], data[3]);
+		char *tmp = palloc(16);
+		snprintf(tmp, 16, "%u.%u.%u.%u", data[0], data[1], data[2], data[3]);
 		uriFreeUriMembersA(&uri);
 		PG_RETURN_INET_P(DirectFunctionCall1(inet_in, CStringGetDatum(tmp)));
 	}
 	else if (uri.hostData.ip6)
 	{
 		unsigned char *data = uri.hostData.ip6;
-		char *tmp = psprintf("%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
-							 data[0], data[1], data[2], data[3],
-							 data[4], data[5], data[6], data[7],
-							 data[8], data[9], data[10], data[11],
-							 data[12], data[13], data[14], data[15]);
+		char *tmp = palloc(40);
+		snprintf(tmp, 40, "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
+				 data[0], data[1], data[2], data[3],
+				 data[4], data[5], data[6], data[7],
+				 data[8], data[9], data[10], data[11],
+				 data[12], data[13], data[14], data[15]);
 		uriFreeUriMembersA(&uri);
 		PG_RETURN_INET_P(DirectFunctionCall1(inet_in, CStringGetDatum(tmp)));
 	}
@@ -226,7 +228,7 @@ uri_path(PG_FUNCTION_ARGS)
 	Datum arg = PG_GETARG_DATUM(0);
 	char *s = TextDatumGetCString(arg);
 	UriUriA uri;
-	ArrayBuildState *astate = initArrayResult(TEXTOID, CurrentMemoryContext);
+	ArrayBuildState *astate = NULL;
 	UriPathSegmentA *pa;
 
 	parse_uri(s, &uri);
@@ -241,11 +243,9 @@ uri_path(PG_FUNCTION_ARGS)
 	}
 	uriFreeUriMembersA(&uri);
 
-	if (astate)
-		PG_RETURN_ARRAYTYPE_P(makeArrayResult(astate,
-											  CurrentMemoryContext));
-	else
-		PG_RETURN_NULL();
+	PG_RETURN_ARRAYTYPE_P(astate
+						  ? makeArrayResult(astate, CurrentMemoryContext)
+						  : construct_empty_array(TEXTOID));
 }
 
 static int

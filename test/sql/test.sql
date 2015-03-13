@@ -1,5 +1,7 @@
 \pset null _null_
 
+SET client_min_messages = warning;
+
 CREATE TABLE test (a serial, b uri);
 
 INSERT INTO test (b)
