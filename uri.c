@@ -298,8 +298,8 @@ PG_FUNCTION_INFO_V1(uri_lt);
 Datum
 uri_lt(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_BOOL(_uri_cmp(arg1, arg2) < 0);
 }
@@ -308,8 +308,8 @@ PG_FUNCTION_INFO_V1(uri_le);
 Datum
 uri_le(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_BOOL(_uri_cmp(arg1, arg2) <= 0);
 }
@@ -318,8 +318,8 @@ PG_FUNCTION_INFO_V1(uri_eq);
 Datum
 uri_eq(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_BOOL(_uri_cmp(arg1, arg2) == 0);
 }
@@ -328,8 +328,8 @@ PG_FUNCTION_INFO_V1(uri_ne);
 Datum
 uri_ne(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_BOOL(_uri_cmp(arg1, arg2) != 0);
 }
@@ -338,8 +338,8 @@ PG_FUNCTION_INFO_V1(uri_ge);
 Datum
 uri_ge(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_BOOL(_uri_cmp(arg1, arg2) >= 0);
 }
@@ -348,8 +348,8 @@ PG_FUNCTION_INFO_V1(uri_gt);
 Datum
 uri_gt(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_BOOL(_uri_cmp(arg1, arg2) > 0);
 }
@@ -358,8 +358,8 @@ PG_FUNCTION_INFO_V1(uri_cmp);
 Datum
 uri_cmp(PG_FUNCTION_ARGS)
 {
-	Datum *arg1 = PG_GETARG_DATUM(0);
-	Datum *arg2 = PG_GETARG_DATUM(1);
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_INT32(_uri_cmp(arg1, arg2));
 }
