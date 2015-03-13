@@ -137,7 +137,6 @@ uri_host_inet(PG_FUNCTION_ARGS)
 	Datum arg = PG_GETARG_DATUM(0);
 	char *s = TextDatumGetCString(arg);
 	UriUriA uri;
-	text *result;
 
 	parse_uri(s, &uri);
 	if (uri.hostData.ip4)
