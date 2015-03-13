@@ -141,7 +141,7 @@ uri_host_inet(PG_FUNCTION_ARGS)
 	parse_uri(s, &uri);
 	if (uri.hostData.ip4)
 	{
-		unsigned char *data = uri.hostData.ip4;
+		unsigned char *data = uri.hostData.ip4->data;
 		char *tmp = palloc(16);
 		snprintf(tmp, 16, "%u.%u.%u.%u", data[0], data[1], data[2], data[3]);
 		uriFreeUriMembersA(&uri);
@@ -149,7 +149,7 @@ uri_host_inet(PG_FUNCTION_ARGS)
 	}
 	else if (uri.hostData.ip6)
 	{
-		unsigned char *data = uri.hostData.ip6;
+		unsigned char *data = uri.hostData.ip6->data;
 		char *tmp = palloc(40);
 		snprintf(tmp, 40, "%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x",
 				 data[0], data[1], data[2], data[3],
