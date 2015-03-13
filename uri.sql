@@ -7,13 +7,13 @@ CREATE FUNCTION uri_in(cstring) RETURNS uri
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_out(uri) RETURNS cstring
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE TYPE uri (
     INTERNALLENGTH = -1,
@@ -30,92 +30,92 @@ CREATE FUNCTION uri_scheme(uri) RETURNS text
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_userinfo(uri) RETURNS text
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_host(uri) RETURNS text
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_host_inet(uri) RETURNS inet
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_port(uri) RETURNS integer
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_query(uri) RETURNS text
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_fragment(uri) RETURNS text
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_path(uri) RETURNS text[]
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 
 CREATE FUNCTION uri_lt(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_le(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_eq(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_ne(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_ge(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_gt(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE FUNCTION uri_cmp(uri, uri) RETURNS integer
     IMMUTABLE
     STRICT
     LANGUAGE C
-    AS '$libdir/pguri';
+    AS '$libdir/uri';
 
 CREATE OPERATOR < (
     LEFTARG = uri,

@@ -3,10 +3,10 @@ PKG_CONFIG = pkg-config
 
 extension_version = 0
 
-EXTENSION = pguri
-MODULE_big = pguri
-OBJS = pguri.o
-DATA_built = pguri--$(extension_version).sql
+EXTENSION = uri
+MODULE_big = uri
+OBJS = uri.o
+DATA_built = uri--$(extension_version).sql
 
 ifeq (no,$(shell $(PKG_CONFIG) liburiparser || echo no))
 $(warning liburiparser not registed with pkg-config, build might fail)
@@ -21,5 +21,5 @@ REGRESS_OPTS = --inputdir=test
 PGXS := $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
 
-pguri--$(extension_version).sql: pguri.sql
+uri--$(extension_version).sql: uri.sql
 	cat $^ >$@
