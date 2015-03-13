@@ -32,14 +32,6 @@ SELECT * FROM test;
 (12 rows)
 
 -- error cases
-SELECT uri ':';
-ERROR:  invalid input syntax for type uri at or near ":"
-LINE 1: SELECT uri ':';
-                   ^
-SELECT uri 'foo bar';
-ERROR:  invalid input syntax for type uri at or near " bar"
-LINE 1: SELECT uri 'foo bar';
-                   ^
 SELECT uri 'http://host:port/';
 ERROR:  invalid input syntax for type uri at or near "/"
 LINE 1: SELECT uri 'http://host:port/';

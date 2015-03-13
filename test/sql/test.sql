@@ -21,8 +21,6 @@ VALUES ('http://www.postgresql.org/'),
 SELECT * FROM test;
 
 -- error cases
-SELECT uri ':';
-SELECT uri 'foo bar';
 SELECT uri 'http://host:port/';
 
 
