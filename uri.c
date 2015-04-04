@@ -1,6 +1,7 @@
 #include <postgres.h>
 #include <catalog/pg_type.h>
 #include <fmgr.h>
+#include <lib/stringinfo.h>
 #include <utils/array.h>
 #include <utils/builtins.h>
 #include <utils/inet.h>
@@ -223,6 +224,34 @@ uri_fragment(PG_FUNCTION_ARGS)
 PG_FUNCTION_INFO_V1(uri_path);
 Datum
 uri_path(PG_FUNCTION_ARGS)
+{
+	Datum arg = PG_GETARG_DATUM(0);
+	char *s = TextDatumGetCString(arg);
+	UriUriA uri;
+	StringInfoData buf;
+	UriPathSegmentA *p;
+
+	initStringInfo(&buf);
+
+	parse_uri(s, &uri);
+
+	if (uri.absolutePath || (uriIsHostSetA(&uri) && uri.pathHead))
+		appendStringInfoChar(&buf, '/');
+
+	for (p = uri.pathHead; p; p = p->next)
+	{
+		appendBinaryStringInfo(&buf, p->text.first, p->text.afterLast - p->text.first);
+		if (p->next)
+			appendStringInfoChar(&buf, '/');
+	}
+
+	uriFreeUriMembersA(&uri);
+	PG_RETURN_TEXT_P(cstring_to_text(buf.data));
+}
+
+PG_FUNCTION_INFO_V1(uri_path_array);
+Datum
+uri_path_array(PG_FUNCTION_ARGS)
 {
 	Datum arg = PG_GETARG_DATUM(0);
 	char *s = TextDatumGetCString(arg);

@@ -68,7 +68,13 @@ CREATE FUNCTION uri_fragment(uri) RETURNS text
     LANGUAGE C
     AS '$libdir/uri';
 
-CREATE FUNCTION uri_path(uri) RETURNS text[]
+CREATE FUNCTION uri_path(uri) RETURNS text
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uri';
+
+CREATE FUNCTION uri_path_array(uri) RETURNS text[]
     IMMUTABLE
     STRICT
     LANGUAGE C

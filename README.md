@@ -88,6 +88,19 @@ A number of functions are provided to extract parts of a URI:
     Extracts the port of a URI as an integer, for example `5432`.  If
     no port is specified, the return value is null.
 
+- `uri_path(uri) returns text`
+
+    Extracts the path component of a URI.  Logically, a URI always
+    contains a path.  The return value can be an empty string but
+    never null.
+
+- `uri_path_array(uri) returns text[]`
+
+    Returns the path component of a URI as an array, with the path
+    split at the slash characters.  This is probably not as useful as
+    the `uri_path` function, but it is provided here because the
+    `uriparser` library exposes it.
+
 - `uri_query(uri) returns text`
 
     Extracts the query part of a URI (roughly speaking, everything

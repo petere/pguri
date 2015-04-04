@@ -16,7 +16,9 @@ VALUES ('http://www.postgresql.org/'),
        ('http://[1080::8:800:200C:417A]/foo'),
        ('http://host:'),
        (''),
-       ('foobar');
+       ('/'),
+       ('foobar'),
+       ('/foobar');
 
 SELECT * FROM test;
 
@@ -32,6 +34,7 @@ SELECT b AS uri,
        uri_host_inet(b),
        uri_port(b),
        uri_path(b),
+       uri_path_array(b),
        uri_query(b),
        uri_fragment(b)
   FROM test;
