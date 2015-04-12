@@ -110,3 +110,19 @@ A number of functions are provided to extract parts of a URI:
 
     Extracts the fragment part of a URI (roughly speaking, everything
     after the `#`).  If there is no fragment part, returns null.
+
+Other functions:
+
+- `uri_normalize(uri) returns uri`
+
+    Performs syntax-based normalization of the URI.  This includes
+    case normalization, percent-encoding normalization, and removing
+    redundant `.` and `..` path segments.  See
+    [RFC 3986 section 6.2.2](http://tools.ietf.org/html/rfc3986#section-6.2.2)
+    for the full details.
+
+    Note that this module (and similar modules in other programming
+    languages) compares URIs for equality in their original form,
+    without normalization.  If you want to consider distinct URIs
+    without regard for mostly irrelevant syntax differences, pass them
+    through this function.

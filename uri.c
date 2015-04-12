@@ -277,6 +277,35 @@ uri_path_array(PG_FUNCTION_ARGS)
 		PG_RETURN_ARRAYTYPE_P(construct_empty_array(TEXTOID));
 }
 
+PG_FUNCTION_INFO_V1(uri_normalize);
+Datum
+uri_normalize(PG_FUNCTION_ARGS)
+{
+	Datum arg = PG_GETARG_DATUM(0);
+	char *s = TextDatumGetCString(arg);
+	UriUriA uri;
+	int rc;
+	int charsRequired;
+	char *ret;
+
+	parse_uri(s, &uri);
+
+	if ((rc = uriNormalizeSyntaxA(&uri)) != URI_SUCCESS)
+		elog(ERROR, "uriNormalizeSyntaxA() failed: error code %d", rc);
+
+	if ((rc = uriToStringCharsRequiredA(&uri, &charsRequired)) != URI_SUCCESS)
+		elog(ERROR, "uriToStringCharsRequiredA() failed: error code %d", rc);
+	charsRequired++;
+
+	ret = palloc(charsRequired);
+	if ((rc = uriToStringA(ret, &uri, charsRequired, NULL)) != URI_SUCCESS)
+		elog(ERROR, "uriToStringA() failed: error code %d", rc);
+
+	uriFreeUriMembersA(&uri);
+
+	PG_RETURN_URI_P((uritype *) cstring_to_text(ret));
+}
+
 static int
 cmp_text_range(UriTextRangeA a, UriTextRangeA b)
 {

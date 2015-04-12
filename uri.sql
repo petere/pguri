@@ -81,6 +81,13 @@ CREATE FUNCTION uri_path_array(uri) RETURNS text[]
     AS '$libdir/uri';
 
 
+CREATE FUNCTION uri_normalize(uri) RETURNS uri
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uri';
+
+
 CREATE FUNCTION uri_lt(uri, uri) RETURNS boolean
     IMMUTABLE
     STRICT

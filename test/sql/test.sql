@@ -20,6 +20,12 @@ VALUES ('http://www.postgresql.org/'),
        ('foobar'),
        ('/foobar');
 
+-- normalization test values from <https://tools.ietf.org/html/rfc3986#section-6.2.2>
+INSERT INTO test (b)
+VALUES ('HTTP://www.EXAMPLE.com/'),
+       ('http://www.ex%41mple.com/'),
+       ('eXAMPLE://a/./b/../b/%63/%7bfoo%7d');
+
 SELECT * FROM test;
 
 -- error cases
@@ -28,6 +34,7 @@ SELECT uri 'http://host:port/';
 
 \x on
 SELECT b AS uri,
+       uri_normalize(b),
        uri_scheme(b),
        uri_userinfo(b),
        uri_host(b),
