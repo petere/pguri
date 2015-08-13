@@ -130,6 +130,12 @@ CREATE FUNCTION uri_cmp(uri, uri) RETURNS integer
     LANGUAGE C
     AS '$libdir/uri';
 
+CREATE FUNCTION hash_uri(uri) RETURNS integer
+    IMMUTABLE
+    STRICT
+    LANGUAGE sql
+    AS $f$ SELECT hashtext(cast($1 AS text)); $f$;
+
 CREATE OPERATOR < (
     LEFTARG = uri,
     RIGHTARG = uri,
@@ -200,3 +206,8 @@ CREATE OPERATOR CLASS uri_ops
         OPERATOR        4       >= ,
         OPERATOR        5       > ,
         FUNCTION        1       uri_cmp(uri, uri);
+
+CREATE OPERATOR CLASS uri_ops_hash
+    FOR TYPE uri USING hash AS
+        OPERATOR 1 =,
+        FUNCTION 1 hash_uri(uri);
