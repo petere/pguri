@@ -221,6 +221,21 @@ uri_fragment(PG_FUNCTION_ARGS)
 		PG_RETURN_NULL();
 }
 
+/*
+ * Defined in uriparser library, but not exported, so we keep a local version
+ * here.
+ */
+static bool
+_is_host_set(UriUriA *uri)
+{
+	return (uri != NULL)
+		&& ((uri->hostText.first != NULL)
+			|| (uri->hostData.ip4 != NULL)
+			|| (uri->hostData.ip6 != NULL)
+			|| (uri->hostData.ipFuture.first != NULL)
+			);
+}
+
 PG_FUNCTION_INFO_V1(uri_path);
 Datum
 uri_path(PG_FUNCTION_ARGS)
@@ -235,7 +250,7 @@ uri_path(PG_FUNCTION_ARGS)
 
 	parse_uri(s, &uri);
 
-	if (uri.absolutePath || (uriIsHostSetA(&uri) && uri.pathHead))
+	if (uri.absolutePath || (_is_host_set(&uri) && uri.pathHead))
 		appendStringInfoChar(&buf, '/');
 
 	for (p = uri.pathHead; p; p = p->next)
