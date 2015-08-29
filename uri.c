@@ -1,4 +1,5 @@
 #include <postgres.h>
+#include <access/hash.h>
 #include <catalog/pg_type.h>
 #include <fmgr.h>
 #include <lib/stringinfo.h>
@@ -16,9 +17,11 @@ typedef struct varlena uritype;
 
 
 #define DatumGetUriP(X)		((uritype *) PG_DETOAST_DATUM(X))
+#define DatumGetUriPP(X)	((uritype *) PG_DETOAST_DATUM_PACKED(X))
 #define UriPGetDatum(X)		PointerGetDatum(X)
 
 #define PG_GETARG_URI_P(n)	DatumGetUriP(PG_GETARG_DATUM(n))
+#define PG_GETARG_URI_PP(n)	DatumGetUriPP(PG_GETARG_DATUM(n))
 #define PG_RETURN_URI_P(x)	PG_RETURN_POINTER(x)
 
 
@@ -435,4 +438,20 @@ uri_cmp(PG_FUNCTION_ARGS)
 	Datum arg2 = PG_GETARG_DATUM(1);
 
 	PG_RETURN_INT32(_uri_cmp(arg1, arg2));
+}
+
+PG_FUNCTION_INFO_V1(uri_hash);
+Datum
+uri_hash(PG_FUNCTION_ARGS)
+{
+	uritype	   *key = PG_GETARG_URI_PP(0);
+	Datum		result;
+
+	result = hash_any((unsigned char *) VARDATA_ANY(key),
+					  VARSIZE_ANY_EXHDR(key));
+
+	/* Avoid leaking memory for toasted inputs */
+	PG_FREE_IF_COPY(key, 0);
+
+	return result;
 }

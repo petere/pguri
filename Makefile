@@ -1,11 +1,12 @@
 PG_CONFIG = pg_config
 PKG_CONFIG = pkg-config
 
-extension_version = 0
+extension_version = 1
 
 EXTENSION = uri
 MODULE_big = uri
 OBJS = uri.o
+DATA = uri--0--1.sql
 DATA_built = uri--$(extension_version).sql
 
 ifeq (no,$(shell $(PKG_CONFIG) liburiparser || echo no))

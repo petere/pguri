@@ -289,3 +289,14 @@ SELECT DISTINCT b FROM test ORDER BY b;
  ssh://username@review.openstack.org:29418/openstack/nova.git
 (17 rows)
 
+CREATE TABLE test2 (x text, y uri);
+INSERT INTO test2 VALUES ('foo', 'http://www.postgresql.org/');
+-- check hashing (issue petere/pguri#3)
+SET enable_nestloop = off;
+SET enable_mergejoin = off;
+SELECT * FROM test JOIN test2 ON b = y AND a = 1;
+ a |             b              |  x  |             y              
+---+----------------------------+-----+----------------------------
+ 1 | http://www.postgresql.org/ | foo | http://www.postgresql.org/
+(1 row)
+

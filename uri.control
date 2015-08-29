@@ -1,4 +1,4 @@
 comment = 'uri type'
-default_version = 0
+default_version = 1
 module_pathname = '$libdir/uri'
 relocatable = true

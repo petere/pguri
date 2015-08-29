@@ -48,3 +48,12 @@ SELECT b AS uri,
 \x off
 
 SELECT DISTINCT b FROM test ORDER BY b;
+
+
+CREATE TABLE test2 (x text, y uri);
+INSERT INTO test2 VALUES ('foo', 'http://www.postgresql.org/');
+
+-- check hashing (issue petere/pguri#3)
+SET enable_nestloop = off;
+SET enable_mergejoin = off;
+SELECT * FROM test JOIN test2 ON b = y AND a = 1;
