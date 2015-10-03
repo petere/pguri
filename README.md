@@ -126,3 +126,22 @@ Other functions:
     without normalization.  If you want to consider distinct URIs
     without regard for mostly irrelevant syntax differences, pass them
     through this function.
+
+- `uri_escape(text, space_to_plus boolean DEFAULT false, normalize_breaks boolean DEFAULT false) returns text`
+
+    Percent-encodes all reserved characters from the text.  This can
+    be useful for constructing URIs from strings.
+
+    If `space_to_plus` is true, then spaces are replaced by plus
+    signs.  If `normalize_breaks` is true, then line breaks are
+    converted to CR LF pairs (and subsequently percent-encoded).  Note
+    that these two conversions come from the HTML standard for
+    encoding form data but are not part of the specification for URIs.
+
+- `uri_unescape(text, plus_to_space boolean DEFAULT false, break_conversion boolean DEFAULT false) returns text`
+
+    Decodes all percent-encodings in the text.
+
+    If `plus_to_space` is true, then plus signs are converted to
+    spaces.  If `break_conversion` is true, then CR LF pairs are
+    converted to simple newlines (`\n`).

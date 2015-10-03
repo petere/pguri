@@ -1,0 +1,99 @@
+SELECT uri_escape('foobar');
+ uri_escape 
+------------
+ foobar
+(1 row)
+
+SELECT uri_escape(':/?#[]@!$&''()*+,;=');
+                       uri_escape                       
+--------------------------------------------------------
+ %3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D
+(1 row)
+
+SELECT uri_escape('foo bar');
+ uri_escape 
+------------
+ foo%20bar
+(1 row)
+
+SELECT uri_escape('foo bar', space_to_plus := false);
+ uri_escape 
+------------
+ foo%20bar
+(1 row)
+
+SELECT uri_escape('foo bar', space_to_plus := true);
+ uri_escape 
+------------
+ foo+bar
+(1 row)
+
+SELECT uri_escape(E'foo\nbar');
+ uri_escape 
+------------
+ foo%0Abar
+(1 row)
+
+SELECT uri_escape(E'foo\nbar', normalize_breaks := false);
+ uri_escape 
+------------
+ foo%0Abar
+(1 row)
+
+SELECT uri_escape(E'foo\nbar', normalize_breaks := true);
+  uri_escape  
+--------------
+ foo%0D%0Abar
+(1 row)
+
+SELECT uri_unescape('foobar');
+ uri_unescape 
+--------------
+ foobar
+(1 row)
+
+SELECT uri_unescape('%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D');
+    uri_unescape    
+--------------------
+ :/?#[]@!$&'()*+,;=
+(1 row)
+
+SELECT uri_unescape('foo+bar');
+ uri_unescape 
+--------------
+ foo+bar
+(1 row)
+
+SELECT uri_unescape('foo+bar', plus_to_space := false);
+ uri_unescape 
+--------------
+ foo+bar
+(1 row)
+
+SELECT uri_unescape('foo+bar', plus_to_space := true);
+ uri_unescape 
+--------------
+ foo bar
+(1 row)
+
+SELECT uri_unescape('foo%0D%0Abar');
+ uri_unescape 
+--------------
+ foo         +
+ bar
+(1 row)
+
+SELECT uri_unescape('foo%0D%0Abar', break_conversion := false);
+ uri_unescape 
+--------------
+ foo         +
+ bar
+(1 row)
+
+SELECT uri_unescape('foo%0D%0Abar', break_conversion := true);
+ uri_unescape 
+--------------
+ foo\r       +
+ bar
+(1 row)
+

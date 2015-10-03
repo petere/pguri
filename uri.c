@@ -455,3 +455,39 @@ uri_hash(PG_FUNCTION_ARGS)
 
 	return result;
 }
+
+PG_FUNCTION_INFO_V1(uri_escape);
+Datum
+uri_escape(PG_FUNCTION_ARGS)
+{
+	text *arg = PG_GETARG_TEXT_PP(0);
+	bool space_to_plus = PG_GETARG_BOOL(1);
+	bool normalize_breaks = PG_GETARG_BOOL(2);
+
+	size_t chars_required;
+	char *ret;
+
+	chars_required = (VARSIZE(arg) - 4) * (normalize_breaks ? 6 : 3) + 1;
+	ret = palloc(chars_required);
+	uriEscapeExA(VARDATA(arg),
+				 VARDATA(arg) + VARSIZE(arg) - 4,
+				 ret,
+				 space_to_plus, normalize_breaks);
+
+	PG_RETURN_TEXT_P(cstring_to_text(ret));
+}
+
+PG_FUNCTION_INFO_V1(uri_unescape);
+Datum
+uri_unescape(PG_FUNCTION_ARGS)
+{
+	text *arg = PG_GETARG_TEXT_PP(0);
+	bool plus_to_space = PG_GETARG_BOOL(1);
+	bool break_conversion = PG_GETARG_BOOL(2);
+
+	char *s = text_to_cstring(arg);
+
+	uriUnescapeInPlaceExA(s, plus_to_space, break_conversion);
+
+	PG_RETURN_TEXT_P(cstring_to_text(s));
+}
