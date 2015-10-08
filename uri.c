@@ -47,6 +47,24 @@ parse_uri(const char *s, UriUriA *urip)
 	}
 }
 
+static char *
+uri_to_string(UriUriA *urip)
+{
+	int rc;
+	int charsRequired;
+	char *ret;
+
+	if ((rc = uriToStringCharsRequiredA(urip, &charsRequired)) != URI_SUCCESS)
+		elog(ERROR, "uriToStringCharsRequiredA() failed: error code %d", rc);
+	charsRequired++;
+
+	ret = palloc(charsRequired);
+	if ((rc = uriToStringA(ret, urip, charsRequired, NULL)) != URI_SUCCESS)
+		elog(ERROR, "uriToStringA() failed: error code %d", rc);
+
+	return ret;
+}
+
 PG_FUNCTION_INFO_V1(uri_in);
 Datum
 uri_in(PG_FUNCTION_ARGS)
@@ -303,7 +321,6 @@ uri_normalize(PG_FUNCTION_ARGS)
 	char *s = TextDatumGetCString(arg);
 	UriUriA uri;
 	int rc;
-	int charsRequired;
 	char *ret;
 
 	parse_uri(s, &uri);
@@ -311,13 +328,7 @@ uri_normalize(PG_FUNCTION_ARGS)
 	if ((rc = uriNormalizeSyntaxA(&uri)) != URI_SUCCESS)
 		elog(ERROR, "uriNormalizeSyntaxA() failed: error code %d", rc);
 
-	if ((rc = uriToStringCharsRequiredA(&uri, &charsRequired)) != URI_SUCCESS)
-		elog(ERROR, "uriToStringCharsRequiredA() failed: error code %d", rc);
-	charsRequired++;
-
-	ret = palloc(charsRequired);
-	if ((rc = uriToStringA(ret, &uri, charsRequired, NULL)) != URI_SUCCESS)
-		elog(ERROR, "uriToStringA() failed: error code %d", rc);
+	ret = uri_to_string(&uri);
 
 	uriFreeUriMembersA(&uri);
 
