@@ -502,3 +502,74 @@ uri_unescape(PG_FUNCTION_ARGS)
 
 	PG_RETURN_TEXT_P(cstring_to_text(s));
 }
+
+PG_FUNCTION_INFO_V1(uri_add_base_uri);
+Datum
+uri_add_base_uri(PG_FUNCTION_ARGS)
+{
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
+
+	UriUriA absoluteDest;
+	UriUriA relativeSource;
+	UriUriA absoluteBase;
+
+	int rc;
+	char *ret;
+
+	parse_uri(TextDatumGetCString(arg1), &relativeSource);
+	parse_uri(TextDatumGetCString(arg2), &absoluteBase);
+
+	if ((rc = uriAddBaseUriA(&absoluteDest, &relativeSource, &absoluteBase)) != URI_SUCCESS)
+	{
+		uriFreeUriMembersA(&absoluteDest);
+		if (rc == URI_ERROR_ADDBASE_REL_BASE)
+			ereport(ERROR,
+					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+					 errmsg("given base is not absolute")));
+		else
+			elog(ERROR, "uriAddBaseUriA() failed: error code %d", rc);
+	}
+
+	ret = uri_to_string(&absoluteDest);
+	uriFreeUriMembersA(&absoluteDest);
+	PG_RETURN_URI_P((uritype *) cstring_to_text(ret));
+}
+
+PG_FUNCTION_INFO_V1(uri_remove_base_uri);
+Datum
+uri_remove_base_uri(PG_FUNCTION_ARGS)
+{
+	Datum arg1 = PG_GETARG_DATUM(0);
+	Datum arg2 = PG_GETARG_DATUM(1);
+	bool domain_root_mode = PG_GETARG_BOOL(2);
+
+	UriUriA dest;
+	UriUriA absoluteSource;
+	UriUriA absoluteBase;
+
+	int rc;
+	char *ret;
+
+	parse_uri(TextDatumGetCString(arg1), &absoluteSource);
+	parse_uri(TextDatumGetCString(arg2), &absoluteBase);
+
+	if ((rc = uriRemoveBaseUriA(&dest, &absoluteSource, &absoluteBase, domain_root_mode)) != URI_SUCCESS)
+	{
+		uriFreeUriMembersA(&dest);
+		if (rc == URI_ERROR_REMOVEBASE_REL_BASE)
+			ereport(ERROR,
+					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+					 errmsg("given base is not absolute")));
+		else if (rc == URI_ERROR_REMOVEBASE_REL_SOURCE)
+			ereport(ERROR,
+					(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+					 errmsg("given source is not absolute")));
+		else
+			elog(ERROR, "uriRemoveBaseUriA() failed: error code %d", rc);
+	}
+
+	ret = uri_to_string(&dest);
+	uriFreeUriMembersA(&dest);
+	PG_RETURN_URI_P((uritype *) cstring_to_text(ret));
+}

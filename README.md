@@ -145,3 +145,28 @@ Other functions:
     If `plus_to_space` is true, then plus signs are converted to
     spaces.  If `break_conversion` is true, then CR LF pairs are
     converted to simple newlines (`\n`).
+
+- `uri_add_base_uri(relative_source uri, absolute_base uri) returns uri`
+
+    Resolves the URI `relative_source` against the base URI
+    `absolute_base`.  The first argument can also be an absolute URI,
+    in which case it will not be changed.  But if the second argument
+    is not absolute, an error will be raised.
+
+    Example: `uri_add_base_uri('../TWO', 'http://www.example.com/one/two/three') --> 'http://www.example.com/one/TWO'`
+
+- `uri_remove_base_uri(absolute_source uri, absolute_base uri, domain_root_mode boolean) returns uri`
+
+    Attempts to create a relative URI for `absolute_source` relative
+    to `absolute_base`.  (If that is not possible, then
+    `absolute_source` will be returned unchanged.)  It is an error if
+    either of the first two arguments are relative URIs.
+
+    `domain_root_mode` selects between two different modes of creating
+    the relative URI: true creates a URI relative to the domain root,
+    false creates a URI relative to the base URI.  (Both of these are
+    equally valid; it is just a matter of aesthetics.)
+
+    Examples:
+    - `uri_remove_base_uri('http://www.example.com/one/TWO', 'http://www.example.com/one/two/three', false) --> '../TWO'`
+    - `uri_remove_base_uri('http://www.example.com/one/TWO', 'http://www.example.com/one/two/three', true) --> '/one/TWO'`

@@ -13,7 +13,7 @@ endif
 PG_CPPFLAGS += $(shell $(PKG_CONFIG) --cflags-only-I liburiparser)
 SHLIB_LINK += $(shell $(PKG_CONFIG) --libs liburiparser)
 
-REGRESS = init test escape
+REGRESS = init test escape base
 REGRESS_OPTS = --inputdir=test
 
 PGXS := $(shell $(PG_CONFIG) --pgxs)

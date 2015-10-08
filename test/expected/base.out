@@ -1,0 +1,90 @@
+SELECT uri_add_base_uri('../TWO', 'file:///one/two/three');
+ uri_add_base_uri 
+------------------
+ file:///one/TWO
+(1 row)
+
+SELECT uri_add_base_uri('/one/TWO', 'file:///one/two/three');
+ uri_add_base_uri 
+------------------
+ file:///one/TWO
+(1 row)
+
+SELECT uri_add_base_uri('../TWO', 'http://www.example.com/one/two/three');
+        uri_add_base_uri        
+--------------------------------
+ http://www.example.com/one/TWO
+(1 row)
+
+SELECT uri_add_base_uri('/one/TWO', 'http://www.example.com/one/two/three');
+        uri_add_base_uri        
+--------------------------------
+ http://www.example.com/one/TWO
+(1 row)
+
+SELECT uri_add_base_uri('http://www.example.com/', 'file:///one/two/three');  -- nonsense, but works
+    uri_add_base_uri     
+-------------------------
+ http://www.example.com/
+(1 row)
+
+SELECT uri_add_base_uri('http://www.example.com/', '../TWO');  -- error
+ERROR:  given base is not absolute
+SELECT uri_add_base_uri('mailto:foo@example.com', 'http://www.example.com/');
+    uri_add_base_uri    
+------------------------
+ mailto:foo@example.com
+(1 row)
+
+SELECT uri_remove_base_uri('file:///one/TWO', 'file:///one/two/three', false);
+ uri_remove_base_uri 
+---------------------
+ ../TWO
+(1 row)
+
+SELECT uri_remove_base_uri('http://www.example.com/one/TWO', 'http://www.example.com/one/two/three', false);
+ uri_remove_base_uri 
+---------------------
+ ../TWO
+(1 row)
+
+SELECT uri_remove_base_uri('http://www.example.com/one/TWO', 'http://www.example.net/one/two/three', false);
+    uri_remove_base_uri    
+---------------------------
+ //www.example.com/one/TWO
+(1 row)
+
+SELECT uri_remove_base_uri('file:///one/TWO', 'http://www.example.net/one/two/three', false);
+ uri_remove_base_uri 
+---------------------
+ file:///one/TWO
+(1 row)
+
+SELECT uri_remove_base_uri('file:///one/TWO', 'file:///one/two/three', true);
+ uri_remove_base_uri 
+---------------------
+ /one/TWO
+(1 row)
+
+SELECT uri_remove_base_uri('http://www.example.com/one/TWO', 'http://www.example.com/one/two/three', true);
+ uri_remove_base_uri 
+---------------------
+ /one/TWO
+(1 row)
+
+SELECT uri_remove_base_uri('http://www.example.com/one/TWO', 'http://www.example.net/one/two/three', true);
+    uri_remove_base_uri    
+---------------------------
+ //www.example.com/one/TWO
+(1 row)
+
+SELECT uri_remove_base_uri('file:///one/TWO', 'http://www.example.net/one/two/three', true);
+ uri_remove_base_uri 
+---------------------
+ file:///one/TWO
+(1 row)
+
+SELECT uri_remove_base_uri('../TWO', 'file:///one/two/three', false);  -- error
+ERROR:  given source is not absolute
+SELECT uri_remove_base_uri('file:///one/TWO', '../three', false);  -- error
+ERROR:  given base is not absolute

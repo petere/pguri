@@ -223,3 +223,15 @@ CREATE FUNCTION uri_unescape(text, plus_to_space boolean DEFAULT false, break_co
     STRICT
     LANGUAGE C
     AS '$libdir/uri';
+
+CREATE FUNCTION uri_add_base_uri(relative_source uri, absolute_base uri) RETURNS uri
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uri';
+
+CREATE FUNCTION uri_remove_base_uri(absolute_source uri, absolute_base uri, domain_root_mode boolean) RETURNS uri
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uri';
