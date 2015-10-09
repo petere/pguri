@@ -273,13 +273,13 @@ SELECT DISTINCT b FROM test ORDER BY b;
  
  /
  /foobar
+ foobar
  HTTP://www.EXAMPLE.com/
  eXAMPLE://a/./b/../b/%63/%7bfoo%7d
- foobar
  ftp://ftp.gnu.org/gnu/bison
  http://[1080::8:800:200C:417A]/foo
- http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
  http://admin:password@192.168.0.1
+ http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
  http://host:
  http://www.ex%41mple.com/
  http://www.postgresql.org/

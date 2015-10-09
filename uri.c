@@ -356,7 +356,7 @@ _uri_cmp(Datum a, Datum b)
 	int res = 0;
 
 	parse_uri(sa, &ua);
-	parse_uri(sa, &ub);
+	parse_uri(sb, &ub);
 
 	if (res == 0)
 		res = cmp_text_range(ua.scheme, ub.scheme);
