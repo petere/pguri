@@ -170,6 +170,16 @@ uri_host_inet(PG_FUNCTION_ARGS)
 	}
 }
 
+static int
+_uri_port_num(UriUriA *urip)
+{
+	if (!urip->portText.first || !urip->portText.afterLast
+		|| urip->portText.afterLast == urip->portText.first)
+		return -1;
+	return strtol(pnstrdup(urip->portText.first, urip->portText.afterLast - urip->portText.first),
+				 NULL, 10);
+}
+
 PG_FUNCTION_INFO_V1(uri_port);
 Datum
 uri_port(PG_FUNCTION_ARGS)
@@ -177,15 +187,14 @@ uri_port(PG_FUNCTION_ARGS)
 	Datum arg = PG_GETARG_DATUM(0);
 	char *s = TextDatumGetCString(arg);
 	UriUriA uri;
-	const char *p;
+	int num;
 
 	parse_uri(s, &uri);
-	if (!uri.portText.first || !uri.portText.afterLast
-		|| uri.portText.afterLast == uri.portText.first)
-		PG_RETURN_NULL();
-	p = pnstrdup(uri.portText.first, uri.portText.afterLast - uri.portText.first);
+	num = _uri_port_num(&uri);
 	uriFreeUriMembersA(&uri);
-	PG_RETURN_INT32(strtol(p, NULL, 10));
+	if (num < 0)
+		PG_RETURN_NULL();
+	PG_RETURN_INT32(num);
 }
 
 PG_FUNCTION_INFO_V1(uri_query);
@@ -325,6 +334,56 @@ uri_normalize(PG_FUNCTION_ARGS)
 }
 
 static int
+strcasecmp_ascii(const char *s1, const char *s2)
+{
+	for (;;)
+	{
+		unsigned char ch1 = (unsigned char) *s1++;
+		unsigned char ch2 = (unsigned char) *s2++;
+
+		if (ch1 != ch2)
+		{
+			if (ch1 >= 'A' && ch1 <= 'Z')
+				ch1 += 'a' - 'A';
+
+			if (ch2 >= 'A' && ch2 <= 'Z')
+				ch2 += 'a' - 'A';
+
+			if (ch1 != ch2)
+				return (int) ch1 - (int) ch2;
+		}
+		if (ch1 == 0)
+			break;
+	}
+	return 0;
+}
+
+static int
+strncasecmp_ascii(const char *s1, const char *s2, size_t n)
+{
+	while (n-- > 0)
+	{
+		unsigned char ch1 = (unsigned char) *s1++;
+		unsigned char ch2 = (unsigned char) *s2++;
+
+		if (ch1 != ch2)
+		{
+			if (ch1 >= 'A' && ch1 <= 'Z')
+				ch1 += 'a' - 'A';
+
+			if (ch2 >= 'A' && ch2 <= 'Z')
+				ch2 += 'a' - 'A';
+
+			if (ch1 != ch2)
+				return (int) ch1 - (int) ch2;
+		}
+		if (ch1 == 0)
+			break;
+	}
+	return 0;
+}
+
+static int
 cmp_text_range(UriTextRangeA a, UriTextRangeA b)
 {
 	if (!a.first || !a.afterLast)
@@ -338,12 +397,50 @@ cmp_text_range(UriTextRangeA a, UriTextRangeA b)
 		return 1;
 	else
 	{
-		int x = strncmp(a.first, b.first,
-						Min(a.afterLast - a.first, b.afterLast - b.first));
+		int x = strncasecmp_ascii(a.first, b.first,
+								  Min(a.afterLast - a.first, b.afterLast - b.first));
 		if (x == 0)
 			return (a.afterLast - a.first) - (b.afterLast - b.first);
 		return x;
 	}
+}
+
+static int
+cmp_hosts(UriUriA *uap, UriUriA *ubp)
+{
+	if (!uap->hostText.first)
+	{
+		if (!ubp->hostText.first)
+			return 0;
+		else
+			return -1;
+	}
+	else if (uap->hostData.ip4)
+	{
+		if (!ubp->hostText.first)
+			return 1;
+		else if (ubp->hostData.ip4)
+			return memcmp(uap->hostData.ip4->data,
+						  ubp->hostData.ip4->data,
+						  sizeof(uap->hostData.ip4->data));
+		else
+			return -1;
+	}
+	else if (uap->hostData.ip6)
+	{
+		if (!ubp->hostText.first)
+			return 1;
+		else if (ubp->hostData.ip4)
+			return 1;
+		else if (ubp->hostData.ip6)
+			return memcmp(uap->hostData.ip6->data,
+						  ubp->hostData.ip6->data,
+						  sizeof(uap->hostData.ip6->data));
+		else
+			return -1;
+	}
+	else
+		return cmp_text_range(uap->hostText, ubp->hostText);
 }
 
 static int
@@ -361,7 +458,13 @@ _uri_cmp(Datum a, Datum b)
 	if (res == 0)
 		res = cmp_text_range(ua.scheme, ub.scheme);
 	if (res == 0)
-		res = cmp_text_range(ua.hostText, ub.hostText);
+		res = cmp_hosts(&ua, &ub);
+	if (res == 0)
+		res = _uri_port_num(&ua) - _uri_port_num(&ub);
+	if (res == 0)
+		res = cmp_text_range(ua.userInfo, ub.userInfo);
+	if (res == 0)
+		res = strcasecmp_ascii(sa, sb);
 	if (res == 0)
 		res = strcmp(sa, sb);
 	uriFreeUriMembersA(&ua);
