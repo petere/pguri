@@ -4,10 +4,14 @@ CREATE TABLE test (a serial, b uri);
 INSERT INTO test (b)
 VALUES ('http://www.postgresql.org/'),
        ('http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS'),
+       ('http://www.postgresql.org:591/'),
+       ('http://www.postgresql.org:80/'),
        ('https://duckduckgo.com/?q=postgresql&ia=about'),
        ('ftp://ftp.gnu.org/gnu/bison'),
        ('mailto:foo@example.com'),
        ('ssh://username@review.openstack.org:29418/openstack/nova.git'),
+       ('ssh://foobar@review.openstack.org:29418/openstack/nova.git'),
+       ('ssh://review.openstack.org:29418/openstack/nova.git'),
        ('http://admin:password@192.168.0.1'),
        ('http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html'),
        ('http://[1080::8:800:200C:417A]/foo'),
@@ -26,22 +30,26 @@ SELECT * FROM test;
 ----+-----------------------------------------------------------------------------------------
   1 | http://www.postgresql.org/
   2 | http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS
-  3 | https://duckduckgo.com/?q=postgresql&ia=about
-  4 | ftp://ftp.gnu.org/gnu/bison
-  5 | mailto:foo@example.com
-  6 | ssh://username@review.openstack.org:29418/openstack/nova.git
-  7 | http://admin:password@192.168.0.1
-  8 | http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
-  9 | http://[1080::8:800:200C:417A]/foo
- 10 | http://host:
- 11 | 
- 12 | /
- 13 | foobar
- 14 | /foobar
- 15 | HTTP://www.EXAMPLE.com/
- 16 | http://www.ex%41mple.com/
- 17 | eXAMPLE://a/./b/../b/%63/%7bfoo%7d
-(17 rows)
+  3 | http://www.postgresql.org:591/
+  4 | http://www.postgresql.org:80/
+  5 | https://duckduckgo.com/?q=postgresql&ia=about
+  6 | ftp://ftp.gnu.org/gnu/bison
+  7 | mailto:foo@example.com
+  8 | ssh://username@review.openstack.org:29418/openstack/nova.git
+  9 | ssh://foobar@review.openstack.org:29418/openstack/nova.git
+ 10 | ssh://review.openstack.org:29418/openstack/nova.git
+ 11 | http://admin:password@192.168.0.1
+ 12 | http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
+ 13 | http://[1080::8:800:200C:417A]/foo
+ 14 | http://host:
+ 15 | 
+ 16 | /
+ 17 | foobar
+ 18 | /foobar
+ 19 | HTTP://www.EXAMPLE.com/
+ 20 | http://www.ex%41mple.com/
+ 21 | eXAMPLE://a/./b/../b/%63/%7bfoo%7d
+(21 rows)
 
 -- error cases
 SELECT uri 'http://host:port/';
@@ -86,6 +94,30 @@ uri_path_array | {docs,devel,static,xfunc-sql.html}
 uri_query      | _null_
 uri_fragment   | XFUNC-SQL-FUNCTION-ARGUMENTS
 -[ RECORD 3 ]--+----------------------------------------------------------------------------------------
+uri            | http://www.postgresql.org:591/
+uri_normalize  | http://www.postgresql.org:591/
+uri_scheme     | http
+uri_userinfo   | _null_
+uri_host       | www.postgresql.org
+uri_host_inet  | _null_
+uri_port       | 591
+uri_path       | /
+uri_path_array | {""}
+uri_query      | _null_
+uri_fragment   | _null_
+-[ RECORD 4 ]--+----------------------------------------------------------------------------------------
+uri            | http://www.postgresql.org:80/
+uri_normalize  | http://www.postgresql.org:80/
+uri_scheme     | http
+uri_userinfo   | _null_
+uri_host       | www.postgresql.org
+uri_host_inet  | _null_
+uri_port       | 80
+uri_path       | /
+uri_path_array | {""}
+uri_query      | _null_
+uri_fragment   | _null_
+-[ RECORD 5 ]--+----------------------------------------------------------------------------------------
 uri            | https://duckduckgo.com/?q=postgresql&ia=about
 uri_normalize  | https://duckduckgo.com/?q=postgresql&ia=about
 uri_scheme     | https
@@ -97,7 +129,7 @@ uri_path       | /
 uri_path_array | {""}
 uri_query      | q=postgresql&ia=about
 uri_fragment   | _null_
--[ RECORD 4 ]--+----------------------------------------------------------------------------------------
+-[ RECORD 6 ]--+----------------------------------------------------------------------------------------
 uri            | ftp://ftp.gnu.org/gnu/bison
 uri_normalize  | ftp://ftp.gnu.org/gnu/bison
 uri_scheme     | ftp
@@ -109,7 +141,7 @@ uri_path       | /gnu/bison
 uri_path_array | {gnu,bison}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 5 ]--+----------------------------------------------------------------------------------------
+-[ RECORD 7 ]--+----------------------------------------------------------------------------------------
 uri            | mailto:foo@example.com
 uri_normalize  | mailto:foo@example.com
 uri_scheme     | mailto
@@ -121,7 +153,7 @@ uri_path       | foo@example.com
 uri_path_array | {foo@example.com}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 6 ]--+----------------------------------------------------------------------------------------
+-[ RECORD 8 ]--+----------------------------------------------------------------------------------------
 uri            | ssh://username@review.openstack.org:29418/openstack/nova.git
 uri_normalize  | ssh://username@review.openstack.org:29418/openstack/nova.git
 uri_scheme     | ssh
@@ -133,7 +165,31 @@ uri_path       | /openstack/nova.git
 uri_path_array | {openstack,nova.git}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 7 ]--+----------------------------------------------------------------------------------------
+-[ RECORD 9 ]--+----------------------------------------------------------------------------------------
+uri            | ssh://foobar@review.openstack.org:29418/openstack/nova.git
+uri_normalize  | ssh://foobar@review.openstack.org:29418/openstack/nova.git
+uri_scheme     | ssh
+uri_userinfo   | foobar
+uri_host       | review.openstack.org
+uri_host_inet  | _null_
+uri_port       | 29418
+uri_path       | /openstack/nova.git
+uri_path_array | {openstack,nova.git}
+uri_query      | _null_
+uri_fragment   | _null_
+-[ RECORD 10 ]-+----------------------------------------------------------------------------------------
+uri            | ssh://review.openstack.org:29418/openstack/nova.git
+uri_normalize  | ssh://review.openstack.org:29418/openstack/nova.git
+uri_scheme     | ssh
+uri_userinfo   | _null_
+uri_host       | review.openstack.org
+uri_host_inet  | _null_
+uri_port       | 29418
+uri_path       | /openstack/nova.git
+uri_path_array | {openstack,nova.git}
+uri_query      | _null_
+uri_fragment   | _null_
+-[ RECORD 11 ]-+----------------------------------------------------------------------------------------
 uri            | http://admin:password@192.168.0.1
 uri_normalize  | http://admin:password@192.168.0.1
 uri_scheme     | http
@@ -145,7 +201,7 @@ uri_path       |
 uri_path_array | {}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 8 ]--+----------------------------------------------------------------------------------------
+-[ RECORD 12 ]-+----------------------------------------------------------------------------------------
 uri            | http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html
 uri_normalize  | http://[fedc:ba98:7654:3210:fedc:ba98:7654:3210]:80/index.html
 uri_scheme     | http
@@ -157,7 +213,7 @@ uri_path       | /index.html
 uri_path_array | {index.html}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 9 ]--+----------------------------------------------------------------------------------------
+-[ RECORD 13 ]-+----------------------------------------------------------------------------------------
 uri            | http://[1080::8:800:200C:417A]/foo
 uri_normalize  | http://[1080:0000:0000:0000:0008:0800:200c:417a]/foo
 uri_scheme     | http
@@ -169,7 +225,7 @@ uri_path       | /foo
 uri_path_array | {foo}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 10 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 14 ]-+----------------------------------------------------------------------------------------
 uri            | http://host:
 uri_normalize  | http://host:
 uri_scheme     | http
@@ -181,7 +237,7 @@ uri_path       |
 uri_path_array | {}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 11 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 15 ]-+----------------------------------------------------------------------------------------
 uri            | 
 uri_normalize  | 
 uri_scheme     | _null_
@@ -193,7 +249,7 @@ uri_path       |
 uri_path_array | {}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 12 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 16 ]-+----------------------------------------------------------------------------------------
 uri            | /
 uri_normalize  | /
 uri_scheme     | _null_
@@ -205,7 +261,7 @@ uri_path       | /
 uri_path_array | {}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 13 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 17 ]-+----------------------------------------------------------------------------------------
 uri            | foobar
 uri_normalize  | foobar
 uri_scheme     | _null_
@@ -217,7 +273,7 @@ uri_path       | foobar
 uri_path_array | {foobar}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 14 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 18 ]-+----------------------------------------------------------------------------------------
 uri            | /foobar
 uri_normalize  | /foobar
 uri_scheme     | _null_
@@ -229,7 +285,7 @@ uri_path       | /foobar
 uri_path_array | {foobar}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 15 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 19 ]-+----------------------------------------------------------------------------------------
 uri            | HTTP://www.EXAMPLE.com/
 uri_normalize  | http://www.example.com/
 uri_scheme     | HTTP
@@ -241,7 +297,7 @@ uri_path       | /
 uri_path_array | {""}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 16 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 20 ]-+----------------------------------------------------------------------------------------
 uri            | http://www.ex%41mple.com/
 uri_normalize  | http://www.example.com/
 uri_scheme     | http
@@ -253,7 +309,7 @@ uri_path       | /
 uri_path_array | {""}
 uri_query      | _null_
 uri_fragment   | _null_
--[ RECORD 17 ]-+----------------------------------------------------------------------------------------
+-[ RECORD 21 ]-+----------------------------------------------------------------------------------------
 uri            | eXAMPLE://a/./b/../b/%63/%7bfoo%7d
 uri_normalize  | example://a/b/c/%7Bfoo%7D
 uri_scheme     | eXAMPLE
@@ -284,10 +340,14 @@ SELECT DISTINCT b FROM test ORDER BY b;
  http://www.ex%41mple.com/
  http://www.postgresql.org/
  http://www.postgresql.org/docs/devel/static/xfunc-sql.html#XFUNC-SQL-FUNCTION-ARGUMENTS
+ http://www.postgresql.org:591/
+ http://www.postgresql.org:80/
  https://duckduckgo.com/?q=postgresql&ia=about
  mailto:foo@example.com
+ ssh://foobar@review.openstack.org:29418/openstack/nova.git
+ ssh://review.openstack.org:29418/openstack/nova.git
  ssh://username@review.openstack.org:29418/openstack/nova.git
-(17 rows)
+(21 rows)
 
 CREATE TABLE test2 (x text, y uri);
 INSERT INTO test2 VALUES ('foo', 'http://www.postgresql.org/');
