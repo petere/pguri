@@ -47,6 +47,43 @@ parse_uri(const char *s, UriUriA *urip)
 	}
 }
 
+static int
+parse_uri_quiet(const char *s, UriUriA *urip)
+{
+  UriParserStateA state;
+
+  state.uri = urip;
+  uriParseUriA(&state, s);
+
+  if (state.errorCode == URI_SUCCESS) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+
+PG_FUNCTION_INFO_V1(uri_in_quiet);
+Datum
+uri_in_quiet(PG_FUNCTION_ARGS)
+{
+	text *arg = PG_GETARG_TEXT_PP(0);
+	char *s = text_to_cstring(arg);
+  uritype *vardata;
+  UriUriA uri;
+
+  int result = parse_uri_quiet(s, &uri);
+  uriFreeUriMembersA(&uri);
+
+  if (result == 0) {
+    vardata = (uritype *) cstring_to_text(s);
+    PG_RETURN_URI_P(vardata);
+  }
+  else {
+    PG_RETURN_NULL();
+  }
+}
+
 PG_FUNCTION_INFO_V1(uri_in);
 Datum
 uri_in(PG_FUNCTION_ARGS)

@@ -9,6 +9,12 @@ CREATE FUNCTION uri_in(cstring) RETURNS uri
     LANGUAGE C
     AS '$libdir/uri';
 
+CREATE FUNCTION uri_in_quiet(text) RETURNS uri
+    IMMUTABLE
+    STRICT
+    LANGUAGE C
+    AS '$libdir/uri';
+
 CREATE FUNCTION uri_out(uri) RETURNS cstring
     IMMUTABLE
     STRICT
