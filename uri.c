@@ -67,7 +67,8 @@ PG_FUNCTION_INFO_V1(uri_in_quiet);
 Datum
 uri_in_quiet(PG_FUNCTION_ARGS)
 {
-  char *s = PG_GETARG_CSTRING(0);
+	text *arg = PG_GETARG_TEXT_PP(0);
+	char *s = text_to_cstring(arg);
   uritype *vardata;
   UriUriA uri;
 
