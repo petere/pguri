@@ -42,6 +42,7 @@ parse_uri(const char *s, UriUriA *urip)
 					(errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
 					 errmsg("invalid input syntax for type uri at or near \"%s\"",
 							state.errorPos)));
+			break;
 		default:
 			elog(ERROR, "liburiparser error code %d", state.errorCode);
 	}
