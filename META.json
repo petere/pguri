@@ -1,0 +1,45 @@
+{
+   "name": "uri",
+   "abstract": "A URI data type",
+   "description": "This is an extension for PostgreSQL that provides a uri data type.",
+   "version": "1.20151224.0",
+   "maintainer": [
+      "Peter Eisentraut <peter@eisentraut.org>"
+   ],
+   "license": "postgresql",
+   "provides": {
+      "uri": {
+         "abstract": "A URI data type",
+         "file": "uri.c",
+         "docfile": "README.md",
+         "version": "1.0.0"
+      }
+   },
+   "prereqs": {
+      "runtime": {
+         "requires": {
+            "PostgreSQL": "9.1.0"
+         }
+      }
+   },
+   "resources": {
+      "bugtracker": {
+         "web": "https://github.com/petere/pguri/issues"
+      },
+      "repository": {
+         "url": "git://github.com/petere/pguri.git",
+         "web": "https://github.com/petere/pguri/",
+         "type": "git"
+      }
+   },
+   "generated_by": "David E. Wheeler",
+   "meta-spec": {
+      "version": "1.0.0",
+      "url": "https://pgxn.org/meta/spec.txt"
+   },
+   "tags": [
+      "uri",
+      "url",
+      "data type"
+   ]
+}
