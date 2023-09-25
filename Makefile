@@ -10,7 +10,7 @@ ifeq (no,$(shell $(PKG_CONFIG) liburiparser || echo no))
 $(warning liburiparser not registed with pkg-config, build might fail)
 endif
 
-PG_CPPFLAGS += $(shell $(PKG_CONFIG) --cflags-only-I liburiparser)
+PG_CPPFLAGS += $(shell $(PKG_CONFIG) --cflags-only-I liburiparser) -Wno-int-conversion
 SHLIB_LINK += $(shell $(PKG_CONFIG) --libs liburiparser)
 
 REGRESS = init test escape
