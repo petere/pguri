@@ -106,6 +106,12 @@ A number of functions are provided to extract parts of a URI:
     Extracts the query part of a URI (roughly speaking, everything
     after the `?`).  If there is no query part, returns null.
 
+- `uri_query_json(uri) returns json`
+
+    Converts the query part of a URI (roughly speaking, everything
+    after the `?`) into a JSON object. This provides for easier access
+    to individial query parameters. If there is no query part, returns null.
+
 - `uri_fragment(uri) returns text`
 
     Extracts the fragment part of a URI (roughly speaking, everything

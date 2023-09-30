@@ -61,3 +61,24 @@ INSERT INTO test2 VALUES ('foo', 'http://www.postgresql.org/');
 SET enable_nestloop = off;
 SET enable_mergejoin = off;
 SELECT * FROM test JOIN test2 ON b = y AND a = 1;
+
+-- check query_json
+WITH a(uri) as (
+VALUES ('https://duckduckgo.com/?q=postgresql&ia=about'),
+       ('https://duckduckgo.com/?q=postgresql%20%22foo%20bar%22'),
+       ('ftp://ftp.gnu.org/gnu/bison?a=b'),
+       ('mailto:foo@example.com'),
+       ('mailto:foo@example.com?subject=hello%20world'),
+       ('ssh://username@review.openstack.org:29418/openstack/nova.git?what=uri'),
+       (''),
+       ('/'),
+       ('foobar?token=1234'),
+       ('/foobar'),
+       (null)
+)
+SELECT uri,
+       uri_query(uri::uri),
+       uri_query_json(uri::uri)
+  FROM a
+ ORDER BY a;
+
