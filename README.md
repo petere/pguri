@@ -21,13 +21,19 @@ contain arbitrary junk.
 Installation
 ------------
 
-You need to have the above-mentioned `uriparser` library installed.
+You will need to have a Postgres server development system installed.
+
+You also need to have the above-mentioned `uriparser` library installed.
 It is included in many operating system distributions and package
 management systems.  `pkg-config` will be used to find it.  I
 recommend at least version 0.8.0.  Older versions will also work, but
 they apparently contain some bugs and might fail to correctly accept
 or reject URI syntax corner cases.  This is mainly a problem if your
 application needs to be robust against junk input.
+
+On a Debian system, you can install required dependencies with apt:
+
+    apt install liburiparser-dev postgresql-server-dev-17 
 
 To build and install this module:
 
@@ -49,7 +55,7 @@ Using
 This module provides a data type `uri` that you can use like a normal
 type.  For example:
 
-```sql
+```
 CREATE TABLE links (
     id int PRIMARY KEY,
     link uri
