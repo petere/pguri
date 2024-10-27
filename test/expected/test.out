@@ -376,21 +376,22 @@ VALUES ('https://duckduckgo.com/?q=postgresql&ia=about'),
 )
 SELECT uri,
        uri_query(uri::uri),
-       uri_query_json(uri::uri)
+       uri_query_json(uri::uri),
+       uri_query_jsonb(uri::uri)
   FROM a
  ORDER BY a;
-                                  uri                                  |           uri_query            |         uri_query_json          
------------------------------------------------------------------------+--------------------------------+---------------------------------
-                                                                       | _null_                         | _null_
- /                                                                     | _null_                         | _null_
- /foobar                                                               | _null_                         | _null_
- foobar?token=1234                                                     | token=1234                     | {"token":"1234"}
- ftp://ftp.gnu.org/gnu/bison?a=b                                       | a=b                            | {"a":"b"}
- https://duckduckgo.com/?q=postgresql%20%22foo%20bar%22                | q=postgresql%20%22foo%20bar%22 | {"q":"postgresql \"foo bar\""}
- https://duckduckgo.com/?q=postgresql&ia=about                         | q=postgresql&ia=about          | {"q":"postgresql","ia":"about"}
- mailto:foo@example.com                                                | _null_                         | _null_
- mailto:foo@example.com?subject=hello%20world                          | subject=hello%20world          | {"subject":"hello world"}
- ssh://username@review.openstack.org:29418/openstack/nova.git?what=uri | what=uri                       | {"what":"uri"}
- _null_                                                                | _null_                         | _null_
+                                  uri                                  |           uri_query            |         uri_query_json          |          uri_query_jsonb           
+-----------------------------------------------------------------------+--------------------------------+---------------------------------+------------------------------------
+                                                                       | _null_                         | _null_                          | _null_
+ /                                                                     | _null_                         | _null_                          | _null_
+ /foobar                                                               | _null_                         | _null_                          | _null_
+ foobar?token=1234                                                     | token=1234                     | {"token":"1234"}                | {"token": "1234"}
+ ftp://ftp.gnu.org/gnu/bison?a=b                                       | a=b                            | {"a":"b"}                       | {"a": "b"}
+ https://duckduckgo.com/?q=postgresql%20%22foo%20bar%22                | q=postgresql%20%22foo%20bar%22 | {"q":"postgresql \"foo bar\""}  | {"q": "postgresql \"foo bar\""}
+ https://duckduckgo.com/?q=postgresql&ia=about                         | q=postgresql&ia=about          | {"q":"postgresql","ia":"about"} | {"q": "postgresql", "ia": "about"}
+ mailto:foo@example.com                                                | _null_                         | _null_                          | _null_
+ mailto:foo@example.com?subject=hello%20world                          | subject=hello%20world          | {"subject":"hello world"}       | {"subject": "hello world"}
+ ssh://username@review.openstack.org:29418/openstack/nova.git?what=uri | what=uri                       | {"what":"uri"}                  | {"what": "uri"}
+ _null_                                                                | _null_                         | _null_                          | _null_
 (11 rows)
 

@@ -1,1 +1,46 @@
-CREATE EXTENSION uri;
+CREATE EXTENSION uri VERSION '1';
+ALTER EXTENSION uri UPDATE;
+\dx+ uri
+             Objects in extension "uri"
+                 Object description                  
+-----------------------------------------------------
+ cast from text to uri
+ cast from uri to text
+ function uri_cmp(uri,uri)
+ function uri_eq(uri,uri)
+ function uri_escape(text,boolean,boolean)
+ function uri_fragment(uri)
+ function uri_ge(uri,uri)
+ function uri_gt(uri,uri)
+ function uri_hash(uri)
+ function uri_host_inet(uri)
+ function uri_host(uri)
+ function uri_in(cstring)
+ function uri_le(uri,uri)
+ function uri_lt(uri,uri)
+ function uri_ne(uri,uri)
+ function uri_normalize(uri)
+ function uri_out(uri)
+ function uri_path_array(uri)
+ function uri_path(uri)
+ function uri_port(uri)
+ function uri_query_jsonb(uri)
+ function uri_query_json(uri)
+ function uri_query(uri)
+ function uri_scheme(uri)
+ function uri_unescape(text,boolean,boolean)
+ function uri_userinfo(uri)
+ operator class uri_ops for access method btree
+ operator class uri_ops_hash for access method hash
+ operator family uri_ops for access method btree
+ operator family uri_ops_hash for access method hash
+ operator <(uri,uri)
+ operator <=(uri,uri)
+ operator <>(uri,uri)
+ operator =(uri,uri)
+ operator >(uri,uri)
+ operator >=(uri,uri)
+ type uri
+ type uri[]
+(38 rows)
+

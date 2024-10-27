@@ -78,7 +78,8 @@ VALUES ('https://duckduckgo.com/?q=postgresql&ia=about'),
 )
 SELECT uri,
        uri_query(uri::uri),
-       uri_query_json(uri::uri)
+       uri_query_json(uri::uri),
+       uri_query_jsonb(uri::uri)
   FROM a
  ORDER BY a;
 

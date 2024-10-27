@@ -4,7 +4,7 @@ PKG_CONFIG = pkg-config
 EXTENSION = uri
 MODULE_big = uri
 OBJS = uri.o
-DATA = uri--0.sql uri--1.sql uri--0--1.sql uri--1.1.sql uri--1--1.1.sql
+DATA = uri--1.sql uri--1.2.sql uri--0--1.sql uri--1--1.1.sql uri--1.1--1.2.sql
 
 ifeq (no,$(shell $(PKG_CONFIG) liburiparser || echo no))
 $(warning liburiparser not registed with pkg-config, build might fail)

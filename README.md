@@ -112,6 +112,12 @@ A number of functions are provided to extract parts of a URI:
     after the `?`) into a JSON object. This provides for easier access
     to individial query parameters. If there is no query part, returns null.
 
+- `uri_query_jsonb(uri) returns jsonb`
+
+    Converts the query part of a URI (roughly speaking, everything
+    after the `?`) into a JSONB object. This provides for easier access
+    to individial query parameters. If there is no query part, returns null.
+
 - `uri_fragment(uri) returns text`
 
     Extracts the fragment part of a URI (roughly speaking, everything
