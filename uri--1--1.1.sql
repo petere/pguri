@@ -1,4 +1,4 @@
-CREATE FUNCTION uri_query_json(uri) RETURNS json
+CREATE OR REPLACE FUNCTION uri_query_json(uri) RETURNS json
     IMMUTABLE
     STRICT
     LANGUAGE C

@@ -606,10 +606,10 @@ uri_escape(PG_FUNCTION_ARGS)
 	size_t chars_required;
 	char *ret;
 
-	chars_required = (VARSIZE(arg) - 4) * (normalize_breaks ? 6 : 3) + 1;
+	chars_required = (VARSIZE_ANY_EXHDR(arg)) * (normalize_breaks ? 6 : 3) + 1;
 	ret = palloc(chars_required);
-	uriEscapeExA(VARDATA(arg),
-				 VARDATA(arg) + VARSIZE(arg) - 4,
+	uriEscapeExA(VARDATA_ANY(arg),
+				 VARDATA_ANY(arg) + VARSIZE_ANY_EXHDR(arg),
 				 ret,
 				 space_to_plus, normalize_breaks);
 
