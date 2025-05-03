@@ -6,6 +6,7 @@
 #include <utils/array.h>
 #include <utils/builtins.h>
 #include <utils/inet.h>
+#include <utils/json.h>
 
 #include <uriparser/Uri.h>
 
@@ -214,6 +215,40 @@ uri_query(PG_FUNCTION_ARGS)
 		PG_RETURN_TEXT_P(result);
 	else
 		PG_RETURN_NULL();
+}
+
+PG_FUNCTION_INFO_V1(uri_query_json);
+Datum
+uri_query_json(PG_FUNCTION_ARGS)
+{
+	Datum arg = PG_GETARG_DATUM(0);
+	char *s = TextDatumGetCString(arg);
+	UriUriA uri;
+	UriQueryListA *queryList;
+	int itemCount;
+	StringInfoData dst;
+
+	parse_uri(s, &uri);
+	if(uriDissectQueryMallocA(&queryList, &itemCount,
+	  uri.query.first, uri.query.afterLast) == URI_SUCCESS) {
+	  UriQueryListA *p = queryList;
+	  initStringInfo(&dst);
+	  appendStringInfoChar(&dst, '{');
+	  while(p) {
+	    escape_json(&dst,p->key);
+	    appendStringInfoChar(&dst, ':');
+	    escape_json(&dst,p->value);
+	    if(p->next) appendStringInfoChar(&dst,',');
+	    p = p->next;
+	  }
+	  uriFreeQueryListA(queryList);
+	  uriFreeUriMembersA(&uri);
+	  appendStringInfoChar(&dst, '}');
+	  PG_RETURN_TEXT_P(cstring_to_text(dst.data));
+	}
+	uriFreeUriMembersA(&uri);
+
+	PG_RETURN_NULL();
 }
 
 PG_FUNCTION_INFO_V1(uri_fragment);
@@ -571,10 +606,10 @@ uri_escape(PG_FUNCTION_ARGS)
 	size_t chars_required;
 	char *ret;
 
-	chars_required = (VARSIZE(arg) - 4) * (normalize_breaks ? 6 : 3) + 1;
+	chars_required = (VARSIZE_ANY_EXHDR(arg)) * (normalize_breaks ? 6 : 3) + 1;
 	ret = palloc(chars_required);
-	uriEscapeExA(VARDATA(arg),
-				 VARDATA(arg) + VARSIZE(arg) - 4,
+	uriEscapeExA(VARDATA_ANY(arg),
+				 VARDATA_ANY(arg) + VARSIZE_ANY_EXHDR(arg),
 				 ret,
 				 space_to_plus, normalize_breaks);
 
